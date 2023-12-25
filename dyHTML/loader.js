@@ -1,3 +1,34 @@
+/**
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * scripts  
+ * script
+ * 
+ * for run script without add as script tag (also can run script as local)
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+
+
 
 var dy = {};
 var dyHtml = {
@@ -9,21 +40,21 @@ var dyHtml = {
    * type= GET,POST,PUT,DEL,PATCH
    */
   down: function (op) {
-    op = def(op,{});
-    op.type = def(op.type,"Get");
-    op.url = def(op.url,"/");
-    op.success = def(op.success,function (data) { });
-    op.error = def(op.error,function (data) { });
-    op.end = def(op.end,function () { });
-    op.begin = def(op.begin,function () { });
-    op.option = def(op.option,{});
+    op = def(op, {});
+    op.type = def(op.type, "Get");
+    op.url = def(op.url, "/");
+    op.success = def(op.success, function (data) { });
+    op.error = def(op.error, function (data) { });
+    op.end = def(op.end, function () { });
+    op.begin = def(op.begin, function () { });
+    op.option = def(op.option, {});
 
     function processData(data) {
-      op.success(data,op.option);
+      op.success(data, op.option);
     }
 
     function handler() {
-      op.subProgress = def(op.subProgress,function (p) { });
+      op.subProgress = def(op.subProgress, function (p) { });
       op.subProgress(this);
       if (this.readyState == this.DONE) {
         if (this.status == 200) {
@@ -40,13 +71,13 @@ var dyHtml = {
       var client = new XMLHttpRequest();
 
       client.onreadystatechange = handler;
-      client.open(op.type,op.url);
-      client.setRequestHeader('Access-Control-Allow-Origin','*');
+      client.open(op.type, op.url);
+      client.setRequestHeader('Access-Control-Allow-Origin', '*');
       op.begin(client);
       client.send();
       client.onprogress = function (pe) {
         if (pe.lengthComputable) {
-          op.progress = def(op.progress,function (p) { });
+          op.progress = def(op.progress, function (p) { });
           op.progress(pe.loaded * 100 / pe.total);
         }
       };
@@ -61,14 +92,14 @@ var dyHtml = {
  * @param {url,type,success,begin,faild,end,progress} op 
  * type= GET,POST,PUT,DEL,PATCH
  */
-  ,upload: function (op) {
-    op = def(op,{});
-    op.type = def(op.type,"POST");
-    op.url = def(op.url,"/");
-    op.success = def(op.success,function (data) { });
-    op.error = def(op.error,function (data) { });
-    op.end = def(op.end,function () { });
-    op.begin = def(op.begin,function () { });
+  , upload: function (op) {
+    op = def(op, {});
+    op.type = def(op.type, "POST");
+    op.url = def(op.url, "/");
+    op.success = def(op.success, function (data) { });
+    op.error = def(op.error, function (data) { });
+    op.end = def(op.end, function () { });
+    op.begin = def(op.begin, function () { });
 
     function processData(data) {
       op.success(data);
@@ -91,10 +122,10 @@ var dyHtml = {
       op.begin(client);
       client.onreadystatechange = handler;
       if ("withCredentials" in client) {
-        client.open(op.type,op.url,true);
+        client.open(op.type, op.url, true);
         client.upload.onprogress = function (pe) {
           if (pe.lengthComputable) {
-            op.progress = def(op.progress,function (p) { });
+            op.progress = def(op.progress, function (p) { });
             op.progress(pe.loaded * 100 / pe.total);
           }
         };
@@ -104,10 +135,10 @@ var dyHtml = {
         client = new XDomainRequest();
         client.onreadystatechange = handler;
 
-        client.open(op.type,op.url);
+        client.open(op.type, op.url);
         client.upload.onprogress = function (pe) {
           if (pe.lengthComputable) {
-            op.progress = def(op.progress,function (p) { });
+            op.progress = def(op.progress, function (p) { });
             op.progress(pe.loaded * 100 / pe.total);
           }
         };
@@ -117,26 +148,26 @@ var dyHtml = {
         var data = new FormData();
         _for(
           op.file,
-          function (at,i) {
-            data.append("file" + i,at.data);
+          function (at, i) {
+            data.append("file" + i, at.data);
           },
           function () {
-            client.setRequestHeader("content",JSON.stringify(op.data));
+            client.setRequestHeader("content", JSON.stringify(op.data));
             client.send(data);
             client.upload.onprogress = function (pe) {
               if (pe.lengthComputable) {
-                op.progress = def(op.progress,function (p) { });
+                op.progress = def(op.progress, function (p) { });
                 op.progress(pe.loaded * 100 / pe.total);
               }
             };
           }
         );
       } else {
-        client.setRequestHeader("Content-Type","application/json;charset=UTF-8");
-        client.send(def(op.data,false) ? JSON.stringify(op.data) : "");
+        client.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        client.send(def(op.data, false) ? JSON.stringify(op.data) : "");
         client.onprogress = function (pe) {
           if (pe.lengthComputable) {
-            op.progress = def(op.progress,function (p) { });
+            op.progress = def(op.progress, function (p) { });
             op.progress(pe.loaded * 100 / pe.total);
           }
         };
@@ -145,29 +176,54 @@ var dyHtml = {
       op.error(e);
       op.end();
     }
+  },
+  getDyElement: function (sel) {
+    if (!first(sel) || first(sel).iden) return null;
+    return tsID[first(sel).iden];
   }
-  ,script: function (p,fn) {
+  , script: function (p, fn, prm,localJs) {
+
     dyHtml.down({
       url: p,
       success: function (d) {
+        if(localJs){
+          var local = {};
+          local = js(d);  
+          if (fn) fn(prm,local);
+        } else {
         window.eval(d);
-        if (fn) fn();
+        if (fn) fn(prm);
+        }
       }
     });
-  } 
-  ,replace: function (tid,data,template) {
+  }
+  , scripts: function (ps, fn, n,isLocal) {
+
+
+    if (n == undefined) {
+      dyHtml.scripts(ps, fn, 0,isLocal);
+      return;
+    }
+
+    if (n < ps.length) {
+      dyHtml.script(ps[n], n == ps.length - 1 ? fn : function (op,l) {
+        dyHtml.scripts(ps, fn, n + 1,isLocal);
+      },null,isLocal);
+    }
+  }
+  , replace: function (tid, data, template) {
 
     if (typeof (tid) != "number") {
 
       if (!tid || !tid.iden) {
         TsID[++temp_baseIdentity] = { ctrl: tid };
         tid = temp_baseIdentity;
-      } else  tid = (tid.iden);
+      } else tid = (tid.iden);
     }
 
     if (!TsID[tid]) {
 
-      console.log('error :',tid + ' not found component!');
+      console.log('error :', tid + ' not found component!');
       return;
     }
 
@@ -178,29 +234,39 @@ var dyHtml = {
       value: template ? template : TsID[tid].template,
       attributes: {
         "params": { value: data }, 
-        
-        "path": null,
-        "page": null,
       },
 
-      setAttribute: function (n,v) {
+      setAttribute: function (n, v) {
         th.nextElementSibling.attributes[n] = { value: v };
       },
 
     };
 
 
-
+    
     if (typeof (data) == "object") {
+ 
 
       if (data.length) {
-        elementPageRepeat(th,tid,true);
+        elementPageRepeat(th, tid, true);
+      } else {
+       
+        th.attributes = {
+            "params": { value: data }, 
+            "path": { value: data.path },
+            "page": { value: data.page },
+          }; 
+          th.setAttribute =  function (n, v) {
+            th.attributes[n] = { value: v };
+          } ; 
+       
+        elementPageLoad(th, tid, true);
       }
 
     } else if (typeof (data) == "number") {
 
-      th.nextElementSibling.attributes['oncreate'] = { value: 'item = ' + data+';' };
-      elementPageSwitch(th,tid,true);
+      th.nextElementSibling.attributes['oncreate'] = { value: 'item = ' + data + ';' };
+      elementPageSwitch(th, tid, true);
 
     } else if (typeof (data) == "string") {
 
@@ -217,12 +283,15 @@ var dyHtml = {
 
 
 var temp_baseIdentity = 0;
-function initInnerContent(d,fn,fs,pms,fe) {
+var temp_objectIden = 0;
+var temp_object = [];
 
-  fn = def(fn,function (d) {
+function initInnerContent(d, fn, fs, pms, fe) {
+
+  fn = def(fn, function (d) {
     return d;
   });
-  fs = def(fs,function (d) {
+  fs = def(fs, function (d) {
     return d;
   });
 
@@ -251,16 +320,24 @@ function initInnerContent(d,fn,fs,pms,fe) {
     AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
         9TXL0Y4OHwAAAABJRU5ErkJggg==" onload="elementPageDynamic(this,$$TID)" /><textarea class="hdn-i" `
     )
-    .replaceAll("></loader>",` />`)
-    .replaceAll("</repeater>",`</textarea>`)
-    .replaceAll("$$root",dy.basePath)
-    .replaceAll("$$src=","src=")
-    .replaceAll("$$date",new Date().getTime())
-    .replaceAll("$$images","/images");
+    .replaceAll("></loader>", ` />`)
+    .replaceAll("</repeater>", `</textarea>`)
+    .replaceAll("$$root", dy.basePath)
+    .replaceAll("$$src=", "src=")
+    .replaceAll("$$date", new Date().getTime())
+    .replaceAll("$$images", "/images");
 
   if (pms) {
-    for (var pm in pms) {
-      d = d.replaceAll('$$' + pm,pms[pm]);
+    for (var pm in pms) { 
+
+      if(typeof(pms[pm])=='object')
+       {
+        temp_objectIden ++;
+        temp_object[temp_objectIden] = pms[pm];
+        d = d.replaceAll('$$' + pm,'temp_object['+temp_objectIden+']');
+
+       } else  
+      d = d.replaceAll('$$' + pm, pms[pm]);
     }
   }
 
@@ -270,10 +347,10 @@ function initInnerContent(d,fn,fs,pms,fe) {
 
 
     d = sd0[1];
-    TsID[pms.TID] = def(TsID[pms.TID],{});
-    TsID[pms.TID].initSscript = fs(sd0[0]).replace("<script>","").replace("</script>","");
+    TsID[pms.TID] = def(TsID[pms.TID], {});
+    TsID[pms.TID].initSscript = fs(sd0[0]).replace("<script>", "").replace("</script>", "");
 
-    callInitialized(pms.TID,function (d) {
+    callInitialized(pms.TID, function (d) {
 
     });
   }
@@ -285,7 +362,7 @@ function initInnerContent(d,fn,fs,pms,fe) {
   }
   fn(d);
   if (sd.length != 0) {
-    window.eval(fs(sd[1]).replace("<script>","").replace("</script>",""));
+    window.eval(fs(sd[1]).replace("<script>", "").replace("</script>", "").replaceAll('$$_', 'TsID[' + pms.TID + '].'));
     fe(TsID[pms.TID]);
   }
 }
@@ -302,8 +379,6 @@ window.behindLoop = function () {
 };
 window.behindLoop();
 window.TsID = [];
-
-
 
 window.rootUps = [];
 window.rootMoves = [];
@@ -338,78 +413,83 @@ window.winUp = function (evt) {
   }
 };
 
-window.init_page = function (d,json) {
+window.init_page = function (d, json) {
 
+   
   for (var it in json) {
-
-    d = d.replaceAll('$$' + it,json[it]);
+   
+    d = d.replaceAll('$$' + it, json[it]);
   }
   return d;
 };
 
-document.addEventListener('mousemove',winMove);
-document.addEventListener('mouseup',winUp);
-document.addEventListener('click',winClick);
-document.addEventListener('wheel',winWheel);
+document.addEventListener('mousemove', winMove);
+document.addEventListener('mouseup', winUp);
+document.addEventListener('click', winClick);
+document.addEventListener('wheel', winWheel);
 
 
-var callInitialized = function (tid,f) {
+var callInitialized = function (tid, f) {
   var callScript = null;
   if (TsID[tid] && TsID[tid].initSscript) {
 
-    callScript = js('callScript =   function(f){' + TsID[tid].initSscript.replaceAll('$$_','TsID[' + tid + '].') + ' TsID[' + tid + '].scriptApplyed = true; f(TsID[' + tid + '].data);  }');
+    callScript = js('callScript =   function(f){' + TsID[tid].initSscript.replaceAll('$$_', 'TsID[' + tid + '].') + ' TsID[' + tid + '].scriptApplyed = true; f(TsID[' + tid + '].data);  }');
   }
 
   if (callScript) callScript(f);
   else f();
 };
 
-window.elementPageLoad = function (th,tid) {
-
+window.elementPageLoad = function (th, tid, noNeedParse) {
 
 
   var par = th.parentNode;
-  if (!th.attributes['page']) th.setAttribute('page','icon');
-  if (!th.attributes['path']) th.setAttribute('path','/');
-  if (!th.attributes['params']) th.setAttribute('params','{}');
+  par.iden = tid;
+  if (!th.attributes['page']) th.setAttribute('page', 'icon');
+  if (!th.attributes['path']) th.setAttribute('path', '/');
+  if (!th.attributes['params']) th.setAttribute('params', '{}');
 
 
   if (th.attributes['online']) th.online = js('function(p){var element = p;var me = p.event;' + th.attributes['online'].value + '}');
 
-  loadPage(th.attributes['page'].value,par,null,th.attributes['path'].value,js(th.attributes['params'].value.replaceAll('$$_','TsID[' + tid + '].')),th.online);
+  var param;
+  if (!noNeedParse)
+    param = js(th.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
+  else
+    param = th.attributes['params'].value;
+
+  loadPage(th.attributes['page'].value, par, null, th.attributes['path'].value,param, th.online);
 
 };
 
-window.elementPageRepeat = function (th,tid,noNeedParse) {
+window.elementPageRepeat = function (th, tid, noNeedParse) {
 
   var txt = th.nextElementSibling;
 
-
-  callInitialized(tid,function () {
+  callInitialized(tid, function () {
 
     var par = th.parentNode;
     par.iden = tid;
-    if (!txt.attributes['params']) txt.setAttribute('params','{}');
+    if (!txt.attributes['params']) txt.setAttribute('params', '{}');
 
     if (txt.attributes['online']) txt.online = js('function(p){var element = p;var me = p.event;' + txt.attributes['online'].value + '}');
 
     var param;
     if (!noNeedParse)
-      param = js(txt.attributes['params'].value.replaceAll('$$_','TsID[' + tid + '].'));
+      param = js(txt.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
     else
       param = txt.attributes['params'].value;
 
-    let txtValue = txt.value.replaceAll('$$_','TsID[' + tid + '].');
+    let txtValue = txt.value.replaceAll('$$_', 'TsID[' + tid + '].');
 
-    if (txt.attributes['oncreate']) txt.oncreate = js('function(cont ,data,index){ var content = cont; ' + txt.attributes['oncreate'].value.replaceAll('$$_','TsID[' + tid + '].') + ' return content;}');
+    if (txt.attributes['oncreate']) txt.oncreate = js('function(cont ,data,index){ var content = cont; ' + txt.attributes['oncreate'].value.replaceAll('$$_', 'TsID[' + tid + '].') + ' return content;}');
 
     if (!txt.oncreate) txt.oncreate = null;
 
     if (!TsID[tid]) TsID[tid] = {};
 
     TsID[tid].template = txt.value;
-    TsID[tid].ctrl =par;
-   
+    TsID[tid].ctrl = par;
 
     var content = '';
 
@@ -419,37 +499,37 @@ window.elementPageRepeat = function (th,tid,noNeedParse) {
       var c = txtValue;
 
       for (var j in ip) {
-        c = c.replaceAll('$$' + j,(ip[j]));
+        c = c.replaceAll('$$' + j, (ip[j]));
       }
 
       if (txt.oncreate) {
-        c = txt.oncreate(c,ip,i);
+        c = txt.oncreate(c, ip, i);
       }
 
       content += c;
 
     }
 
-    par.innerHTML = content; 
+    par.innerHTML = content;
 
     txt.remove();
   });
 
 };
 
-window.elementPageSwitch = function (th,tid,noNeedParse) {
+window.elementPageSwitch = function (th, tid, noNeedParse) {
 
   var txt = th.nextElementSibling;
 
 
   if (TsID[tid] && TsID[tid].initSscript)
-    js(TsID[tid].initSscript.replaceAll('$$_','TsID[' + tid + '].'),'init script ' + tid + th.innerHTML);
+    js(TsID[tid].initSscript.replaceAll('$$_', 'TsID[' + tid + '].'), 'init script ' + tid + th.innerHTML);
 
   var par = th.parentNode;
   par.iden = tid;
   par.title = tid;
 
-  if (!txt.attributes['params']) th.setAttribute('params','{}');
+  if (!txt.attributes['params']) th.setAttribute('params', '{}');
 
   if (txt.attributes['online']) th.online = js('function(p){var element = p;var me = p.event;' + th.attributes['online'].value + '}');
 
@@ -457,13 +537,13 @@ window.elementPageSwitch = function (th,tid,noNeedParse) {
   var param;
 
   if (!noNeedParse)
-    param = js(txt.attributes['params'].value.replaceAll('$$_','TsID[' + tid + '].'));
+    param = js(txt.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
   else
     param = txt.attributes['params'].value;
 
   let txtValue = txt.value.split('$$next-case');
 
-  if (txt.attributes['oncreate']) txt.oncreate = js('function(content,data){var item = 0;' + txt.attributes['oncreate'].value.replaceAll('$$_','TsID[' + tid + '].') + ' return item;}');
+  if (txt.attributes['oncreate']) txt.oncreate = js('function(content,data){var item = 0;' + txt.attributes['oncreate'].value.replaceAll('$$_', 'TsID[' + tid + '].') + ' return item;}');
 
   if (!txt.oncreate) txt.oncreate = null;
 
@@ -473,16 +553,16 @@ window.elementPageSwitch = function (th,tid,noNeedParse) {
 
   TsID[tid].template = txt.value;
   TsID[tid].ctrl = par;
-    
+
   var ip = param;
 
   if (txt.oncreate)
-    var item = txt.oncreate(c,ip);
- 
-  var c = txtValue[item].replaceAll('$$_','TsID[' + tid + '].');
+    var item = txt.oncreate(c, ip);
+
+  var c = txtValue[item].replaceAll('$$_', 'TsID[' + tid + '].');
 
   for (var j in ip) {
-    c = c.replaceAll('$$' + j,(ip[j]));
+    c = c.replaceAll('$$' + j, (ip[j]));
   }
 
   content = c;
@@ -490,30 +570,30 @@ window.elementPageSwitch = function (th,tid,noNeedParse) {
 
   par.innerHTML = content;
 
-  if(!noNeedParse)
-  txt.remove();
+  if (!noNeedParse)
+    txt.remove();
 
 };
 
-window.elementPageDynamic = function (th,tid) {
+window.elementPageDynamic = function (th, tid) {
 
   var txt = th.nextElementSibling;
 
 
   if (TsID[tid] && TsID[tid].initSscript)
-    js(TsID[tid].initSscript.replaceAll('$$_','TsID[' + tid + '].'));
+    js(TsID[tid].initSscript.replaceAll('$$_', 'TsID[' + tid + '].'));
 
   var par = th.parentNode;
-  if (!txt.attributes['params']) th.setAttribute('params','{}');
+  if (!txt.attributes['params']) th.setAttribute('params', '{}');
 
   if (txt.attributes['online']) th.online = js('function(p){var element = p;var me = p.event;' + th.attributes['online'].value + '}');
 
 
-  var param = js(txt.attributes['params'].value.replaceAll('$$_','TsID[' + tid + '].'));
+  var param = js(txt.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
 
   let txtValue = txt.value;
 
-  if (txt.attributes['oncreate']) txt.oncreate = js('function(content,data){var item = 0;' + txt.attributes['oncreate'].value.replaceAll('$$_','TsID[' + tid + '].') + ' return content;}');
+  if (txt.attributes['oncreate']) txt.oncreate = js('function(content,data){var item = 0;' + txt.attributes['oncreate'].value.replaceAll('$$_', 'TsID[' + tid + '].') + ' return content;}');
 
   if (!txt.oncreate) txt.oncreate = null;
 
@@ -522,12 +602,12 @@ window.elementPageDynamic = function (th,tid) {
   var ip = param;
 
   if (txt.oncreate)
-    c = txt.oncreate(c,ip);
+    c = txt.oncreate(c, ip);
 
   var c = txtValue;
 
   for (var j in ip) {
-    c = c.replaceAll('$$' + j,(ip[j]));
+    c = c.replaceAll('$$' + j, (ip[j]));
   }
 
   content = c;
@@ -540,25 +620,25 @@ window.elementPageDynamic = function (th,tid) {
 
 let dyHtmlExtensionFormat = ".htm";
 
-window.loadPage = function (page,ctl,fun,root,pms,fs) {
+window.loadPage = function (page, ctl, fun, root, pms, fs) {
   dyHtml.down({
-    url: def(root,'/_src/Component/') + page + dyHtmlExtensionFormat,success: function (d) {
+    url: def(root, '/_src/Component/') + page + dyHtmlExtensionFormat, success: function (d) {
       temp_baseIdentity++;
-      pms = def(pms,{});
+      pms = def(pms, {});
       pms.TID = temp_baseIdentity;
-      initInnerContent(d,function (d1) {
+      initInnerContent(d, function (d1) {
 
         if (TsID[pms.TID] != undefined) {
 
-          d1 = init_page(d1,TsID[pms.TID].data);
+          d1 = init_page(d1, TsID[pms.TID].data);
           TsID[pms.TID].ctrl = ctl;
 
         }
 
         if (!fun) ctl.innerHTML = d1;
-        else fun(ctl,d1,pms);
+        else fun(ctl, d1, pms);
 
-      },null,pms,function () {
+      }, null, pms, function () {
         pms.event = TsID[pms.TID];
         if (fs) fs(pms);
       });
@@ -567,21 +647,21 @@ window.loadPage = function (page,ctl,fun,root,pms,fs) {
 };
 
 dyHtml.down({
-  url: '/dy.json',success: function (config) {
+  url: '/dy.json', success: function (config) {
 
-    dy = mix(dy,JSON.parse(config),true);
+    dy = mix(dy, JSON.parse(config), true);
 
     first('#tempCss').remove();
 
     dyHtmlExtensionFormat = dy.extension;
 
     var par = document.head;
-    loadPage('head',par,function (d2,c2) {
+    loadPage('head', par, function (d2, c2) {
       d2.innerHTML += c2;
-    },'/_Layout/',pageConfig);
+    }, dy.layout, pageConfig);
 
     var par = document.body;
-    loadPage('body',par,null,'/_Layout/',pageConfig);
+    loadPage('body', par, null, dy.layout, pageConfig);
   }
 })
 
