@@ -6,6 +6,8 @@ Dynamic HTML
   1.1 initialize server :   >npm install -g http-server
 
   1.2 call server :   >http-server
+  //
+  vscode compunent : live server 
 
 . Ceo && Static Non-Script Content - index.HTML and pages 
 . All Page Body And Head Managed in direction -> _layout/

@@ -622,7 +622,7 @@ let dyHtmlExtensionFormat = ".htm";
 
 window.loadPage = function (page, ctl, fun, root, pms, fs) {
   dyHtml.down({
-    url: def(root, '/_src/Component/') + page + dyHtmlExtensionFormat, success: function (d) {
+    url: def(root, '/Layout/') + page + dyHtmlExtensionFormat, success: function (d) {
       temp_baseIdentity++;
       pms = def(pms, {});
       pms.TID = temp_baseIdentity;
