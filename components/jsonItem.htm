@@ -1,0 +1,39 @@
+<div class="w-full">
+    <switcher params="{}" oncreate="item=$$item;">
+        <div class="f f-r f-nw f-at f-ct f-jb m-0005 p-0005">
+            <div class="w-04 f f-r f-at f-ct f-js">$$title</div>
+        </div>
+        $$next-case
+        <div class="rt mb-00125  f f-c f-nw f-at ns f-ct f-jb   p-0005">
+            <div class="ab   w-auto  rotn90 w-mx-00   r-full pb-005 fs-03 prm-t sub-f f-center">$$title <span
+                    class="value sel-t ml-0025"></span></div>
+            <div class=" rt p-00125 f f-c  f-at f-ct f-jb">
+                
+                <input value="$$value"
+                min="$$min"
+                man="$$max"
+                step="$$step" 
+                onmouseenter="this.focus()"
+                onkeydown=" 
+                "
+                onkeyup="
+                this.pValue = typeKey(event,def(this.pValue,''),2); 
+                parent2(this,'.value').innerText = this.pValue;
+                if(event.keyCode ==13){
+                    this.value = pValue; 
+                    this.pValue = null; 
+                }
+                "  
+
+                oninput=" this.click()"    
+
+                onclick="  parent2(this,'.value').innerText = this.value;" id="inp_$$PID_$$name"
+                    class="black graym-h" type="$$type" />
+            </div>
+        </div> 
+        $$next-case
+        <div class="f-center w-full">
+             <input type="button" class="ba-i-01 c-btrans prm sec-t graym-h prm-t-h rad-03 p-0005 pl-00125 pr-00125" value="$$value" onclick="alert(1)" />
+        </div>
+    </switcher>
+</div>

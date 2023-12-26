@@ -1,0 +1,136 @@
+<style id="live_css">
+
+    *,body{
+        font-family: Arimo, Helvetica, sans-serif;
+    }    
+
+    .rot90 {
+        -webkit-transform: rotate3d(0, 0, 1, 90deg);
+        transform: rotate3d(0, 0, 1, 90deg);
+    }
+    .rotn90 {
+        -webkit-transform: rotate3d(0, 0, 1, -90deg);
+        transform: rotate3d(0, 0, 1, -90deg);
+    }
+
+
+
+    .icon {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;  
+        display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr; 
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility; 
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale; 
+        /* Support for IE. */
+        font-feature-settings: 'liga';
+    } 
+ 
+
+ input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 15px;
+  border-radius: 3px; 
+  overflow: hidden; 
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb   {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  position: relative;
+  border-radius: 3px;
+  height: 12px;
+  background: $$prm; 
+  cursor: pointer;
+}
+ 
+
+</style>
+<link href="/pages/css/main.css" rel="stylesheet">
+/// background script
+<script>
+
+function liveCss_hover(name,idel,hover){
+
+    var d =null;
+    if(document.getElementById(name)) d = document.getElementById(name);
+    else {
+        d = document.createElement('style');
+        document.head.appendChild(d);
+    }
+    d.id = name;
+    d.innerHTML = `
+      .`+name+` {
+        `+idel+`
+      }
+      .`+name+`:hover {
+        `+hover+`
+      }
+    `;
+    
+}
+
+function liveCssShow(name){
+    liveCss_hover(name,'','display:none');
+}
+
+function liveCssHide(name){
+    liveCss_hover(name,'display:none','');
+}
+
+function   showElement(name){
+    first(name).classList.remove('hdn-i');
+    
+}
+function  hideElement(name){
+    first(name).classList.add('hdn-i');
+}
+
+
+function makeColor(n,c) {
+        return `.xxx ,.xxx-h:hover ,.xxx-a:active {  background-color: #yyy;   }
+        .xxx-h:hover,.xxx-t-h:hover{ cursor: pointer;}
+        .xxx-t,.xxx-t-h:hover{ color: #yyy ;}
+        .xxx-b,.xxx-b-h:hover{ border-color: #yyy ;}
+        .xxx-i ,.xxx-h-i:hover ,.xxx-a-i:active {  background-color: #yyy !important;   }
+        .xxx-h-i:hover,.xxx-t-h-i:hover{ cursor: pointer !important; }
+        .xxx-t-i,.xxx-t-h-i:hover{ color: #yyy !important;}
+        .xxx-b-i,.xxx-b-h-i:hover{ border-color: #yyy !important;} 
+        
+        `.replaceAll('xxx',n).replaceAll('#yyy',c);
+    }
+
+    first('#live_css').innerHTML += 
+    makeColor('white','$$white')+
+    makeColor('black','$$black')+
+    makeColor('grayl','$$grayl')+
+    makeColor('graym','$$graym')+
+    makeColor('grayd','$$grayd')+
+    makeColor('graytr','$$graytr')+
+    makeColor('darktr','$$darktr')+
+    makeColor('prm','$$prm')+
+    makeColor('sec','$$sec')+
+    makeColor('sel','$$sel')  
+    ;
+
+</script>
