@@ -29,6 +29,7 @@ function join(ar1) {
   return _each(ar1, function (at, i) { _each(at, function (ati, j) { ar3.push(ati); }); }, function () { return ar3; });
 }
 
+var JsIden = 0;
 /** run simple json or Javascript value */
 function js(op, adr) {
 
@@ -40,14 +41,14 @@ function js(op, adr) {
     var funjs = "";
     for (var i in lines) {
       if (lines[i].indexOf('//') != -1) {
-        funjs += lines[i].split('//')[0];
+        funjs += lines[i].split('//')[0].trim();
       }
       else funjs += lines[i];
     }
 
     var r = window.eval(" r = " + funjs.replaceAll('\n', ' ').replaceAll('\r', ' ')); return r;
   } catch (e) {
-    console.log('Error:', e.message, op, adr);
+    console.log('Error JS:', e.message, 'code :' + op, adr);
 
 
   }
@@ -77,6 +78,9 @@ function _for_r(ar, _do, e, b) {
 function parent(p, s) {
   p = def(p, document);
 
+  if (!s) return p.parentNode;
+
+
   var rl = p.parentNode.querySelector(s);
 
   return rl;
@@ -84,16 +88,20 @@ function parent(p, s) {
 function parent2(p, s) {
   p = def(p, document);
 
+  if (!s) return p.parentNode.parentNode;
+
+
   var rl = p.parentNode.parentNode.querySelector(s);
 
   return rl;
 
 }
-function parent2(p, s) {
+function parent3(p, s) {
   p = def(p, document);
 
-  var rl = p.parentNode.parentNode.parentNode.querySelector(s);
+  if (!s) return p.parentNode.parentNode.parentNode;
 
+  var rl = p.parentNode.parentNode.parentNode.querySelector(s);
   return rl;
 
 }
@@ -157,6 +165,66 @@ var E = Math.E;
 var deg = PI / 180.;
 var rad = 180. / PI;
 
+var nextIndex = function (p, i) {
+  var v = false;
+  for (var j in p) {
+    if (v) return j;
+    if (j == i) {
+      v = true;
+    }
+  }
+  return undefined;
+}
+
+
+
+
+var sortIndex = function (p) {
+
+
+  var ids = [];
+  for (var i in p) ids.push(i);
+  ids.sort();
+
+  var m = [];
+  for (var i in ids) {
+    m[ids[i]] = p[ids[i]];
+  }
+
+  return m;
+}
+
+
+var firstIndex = function (p) {
+
+  for (var j in p) {
+
+    return j;
+
+  }
+  return undefined;
+}
+
+var lastIndex = function (p) {
+
+  for (var j in p) {
+  }
+  return j;
+}
+
+var prevIndex = function (p, i) {
+  var v = undefined;
+  for (var j in p) {
+
+    if (j == i) {
+      return (v == 'index' ? undefined : v);
+    }
+    v = j;
+  }
+  return undefined;
+}
+
+
 
 var mix = function (a, b, n) {
 
@@ -204,68 +272,91 @@ function dc(v) {
 
 };
 
-function typeKey(event,s,n) { 
+function typeKey(event, s, n) {
+
 
   switch (event.keyCode) {
 
+
     case 8: { s.pop(); }
     case 46: { s.pop(); }
-    case 48:if(n%2==0)s += '0'; break;
-    case 49:if(n%2==0)s += '1'; break;
-    case 50:if(n%2==0)s += '2'; break;
-    case 51:if(n%2==0)s += '3'; break;
-    case 52:if(n%2==0)s += '4'; break;
-    case 53:if(n%2==0)s += '5'; break;
-    case 54:if(n%2==0)s += '6'; break;
-    case 55:if(n%2==0)s += '7'; break;
-    case 56:if(n%2==0)s += '8'; break;
-    case 57:if(n%2==0)s += '9'; break;
+    case 48: if (n % 2 == 0) s += '0'; break;
+    case 49: if (n % 2 == 0) s += '1'; break;
+    case 50: if (n % 2 == 0) s += '2'; break;
+    case 51: if (n % 2 == 0) s += '3'; break;
+    case 52: if (n % 2 == 0) s += '4'; break;
+    case 53: if (n % 2 == 0) s += '5'; break;
+    case 54: if (n % 2 == 0) s += '6'; break;
+    case 55: if (n % 2 == 0) s += '7'; break;
+    case 56: if (n % 2 == 0) s += '8'; break;
+    case 57: if (n % 2 == 0) s += '9'; break;
+    case 110: if (n % 2 == 0) s += '.'; break;
 
-    case 96: if(n%2==0) s += '0'; break;
-    case 97: if(n%2==0) s += '1'; break;
-    case 98: if(n%2==0) s += '2'; break;
-    case 99: if(n%2==0) s += '3'; break;
-    case 100:if(n%2==0) s += '4'; break;
-    case 101:if(n%2==0) s += '5'; break;
-    case 102:if(n%2==0) s += '6'; break;
-    case 103:if(n%2==0) s += '7'; break;
-    case 104:if(n%2==0) s += '8'; break;
-    case 105:if(n%2==0) s += '9'; break;
+    case 96: if (n % 2 == 0) s += '0'; break;
+    case 97: if (n % 2 == 0) s += '1'; break;
+    case 98: if (n % 2 == 0) s += '2'; break;
+    case 99: if (n % 2 == 0) s += '3'; break;
+    case 100: if (n % 2 == 0) s += '4'; break;
+    case 101: if (n % 2 == 0) s += '5'; break;
+    case 102: if (n % 2 == 0) s += '6'; break;
+    case 103: if (n % 2 == 0) s += '7'; break;
+    case 104: if (n % 2 == 0) s += '8'; break;
+    case 105: if (n % 2 == 0) s += '9'; break;
 
-    case 65: if(t%3==0)s += 'a'; break;
-    case 66: if(t%3==0)s += 'b'; break;
-    case 67: if(t%3==0)s += 'c'; break;
-    case 68: if(t%3==0)s += 'd'; break;
-    case 69: if(t%3==0)s += 'e'; break;
-    case 70: if(t%3==0)s += 'f'; break;
-    case 71: if(t%3==0)s += 'g'; break;
-    case 72: if(t%3==0)s += 'h'; break;
-    case 73: if(t%3==0)s += 'i'; break;
-    case 74: if(t%3==0)s += 'j'; break;
-    case 75: if(t%3==0)s += 'k'; break;
-    case 76: if(t%3==0)s += 'l'; break;
-    case 77: if(t%3==0)s += 'm'; break;
-    case 78: if(t%3==0)s += 'n'; break;
-    case 79: if(t%3==0)s += 'o'; break;
-    case 80: if(t%3==0)s += 'p'; break;
-    case 81: if(t%3==0)s += 'q'; break;
-    case 82: if(t%3==0)s += 'r'; break;
-    case 83: if(t%3==0)s += 's'; break;
-    case 84: if(t%3==0)s += 't'; break;
-    case 85: if(t%3==0)s += 'u'; break;
-    case 86: if(t%3==0)s += 'v'; break;
-    case 87: if(t%3==0)s += 'w'; break;
-    case 88: if(t%3==0)s += 'x'; break;
-    case 89: if(t%3==0)s += 'y'; break;
-    case 90: if(t%3==0)s += 'z'; break;
+    case 65: if (t % 3 == 0) s += 'a'; break;
+    case 66: if (t % 3 == 0) s += 'b'; break;
+    case 67: if (t % 3 == 0) s += 'c'; break;
+    case 68: if (t % 3 == 0) s += 'd'; break;
+    case 69: if (t % 3 == 0) s += 'e'; break;
+    case 70: if (t % 3 == 0) s += 'f'; break;
+    case 71: if (t % 3 == 0) s += 'g'; break;
+    case 72: if (t % 3 == 0) s += 'h'; break;
+    case 73: if (t % 3 == 0) s += 'i'; break;
+    case 74: if (t % 3 == 0) s += 'j'; break;
+    case 75: if (t % 3 == 0) s += 'k'; break;
+    case 76: if (t % 3 == 0) s += 'l'; break;
+    case 77: if (t % 3 == 0) s += 'm'; break;
+    case 78: if (t % 3 == 0) s += 'n'; break;
+    case 79: if (t % 3 == 0) s += 'o'; break;
+    case 80: if (t % 3 == 0) s += 'p'; break;
+    case 81: if (t % 3 == 0) s += 'q'; break;
+    case 82: if (t % 3 == 0) s += 'r'; break;
+    case 83: if (t % 3 == 0) s += 's'; break;
+    case 84: if (t % 3 == 0) s += 't'; break;
+    case 85: if (t % 3 == 0) s += 'u'; break;
+    case 86: if (t % 3 == 0) s += 'v'; break;
+    case 87: if (t % 3 == 0) s += 'w'; break;
+    case 88: if (t % 3 == 0) s += 'x'; break;
+    case 89: if (t % 3 == 0) s += 'y'; break;
+    case 90: if (t % 3 == 0) s += 'z'; break;
+    case 190: if (t % 3 == 0 || t % 2 == 0) s += '.'; break;
 
-    
+
 
   }
   return s;
 
 }
 
+function __len(p, p1) {
+  p1 = def(p1, { x: 0, y: 0, z: 0 });
+  return sqrt(pow(p.x - p1.x) + pow(p.y - p1.y) + pow(p.z - p1.z));
+}
+
+function __pnt(p, d, l) {
+  return {
+    x: p.x + d.x * l,
+    y: p.y + d.y * l,
+    z: p.z + d.z * l
+  };
+}
+function __dir(p, p1, l) {
+  return {
+    x: (p.x - p1.x) / l,
+    y: (p.y - p1.y) / l,
+    z: (p.z - p1.z) / l
+  };
+}
 
 var wind = function (op) {
   op = def(op, {});
@@ -325,4 +416,80 @@ wind.prototype = {
     }
   }
 };
+
+var v3 = {
+  add: function (a, b,t) {
+    return v3.tim({
+      x: a.x + b.x,
+      y: a.y + b.y,
+      z: a.z + b.z
+    },def(t,1));
+  }, 
+  avg: function (a, b ) {
+    return v3.tim({
+      x: a.x + b.x,
+      y: a.y + b.y,
+      z: a.z + b.z
+    },0.5);
+  },
+  sub: function (a, b,t) {
+    return v3.tim({
+      x: a.x - b.x,
+      y: a.y - b.y,
+      z: a.z - b.z
+    },def(t,1));
+  },
+  not: function (a) {
+    return {
+      x: -a.x,
+      y: -a.y,
+      z: -a.z
+    };
+  },
+  len: function (a) {
+    return pow(pow(a.x) + pow(a.y) + pow(a.z), 0.5);
+  },
+  nrm: function (a) {
+    var l = v3.len(a);
+    if (l == 0) return {
+      x: 0,
+      y: 0,
+      z: 0
+    };
+    return {
+      x: a.x / l,
+      y: a.y / l,
+      z: a.z / l
+    };
+  },
+  div: function (a, b) {
+    if (b.x)
+      return {
+        x: a.x / b.x,
+        y: a.y / b.y,
+        z: a.z / b.z
+      };
+    else return {
+      x: a.x / b,
+      y: a.y / b,
+      z: a.z / b
+    };
+  },
+  tim: function (a, b) {
+
+    if (b.x)
+      return {
+        x: a.x * b.x,
+        y: a.y * b.y,
+        z: a.z * b.z
+      };
+    else return {
+      x: a.x * b,
+      y: a.y * b,
+      z: a.z * b
+    };
+  },
+
+
+}
 

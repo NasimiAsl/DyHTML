@@ -177,53 +177,82 @@ var dyHtml = {
       op.end();
     }
   },
+  get: function (ctl, key) {
+    if (!key) return TsID[ctl.iden];
+    if (key) return TsID[ctl.iden][key];
+  },
   getDyElement: function (sel) {
     if (!first(sel) || first(sel).iden) return null;
     return tsID[first(sel).iden];
   }
-  , script: function (p, fn, prm,localJs) {
+  , script: function (p, fn, prm, localJs) {
 
     dyHtml.down({
       url: p,
       success: function (d) {
-        if(localJs){
+        if (localJs) {
           var local = {};
-          local = js(d);  
-          if (fn) fn(prm,local);
+          local = js(d);
+          if (fn) fn(prm, local);
         } else {
-        window.eval(d);
-        if (fn) fn(prm);
+          window.eval(d);
+          if (fn) fn(prm);
         }
       }
     });
   }
-  , scripts: function (ps, fn, n,isLocal) {
+  , scripts: function (ps, fn, n, isLocal) {
 
 
     if (n == undefined) {
-      dyHtml.scripts(ps, fn, 0,isLocal);
+      dyHtml.scripts(ps, fn, 0, isLocal);
       return;
     }
 
     if (n < ps.length) {
-      dyHtml.script(ps[n], n == ps.length - 1 ? fn : function (op,l) {
-        dyHtml.scripts(ps, fn, n + 1,isLocal);
-      },null,isLocal);
+      dyHtml.script(ps[n], n == ps.length - 1 ? fn : function (op, l) {
+        dyHtml.scripts(ps, fn, n + 1, isLocal);
+      }, null, isLocal);
     }
   }
-  , replace: function (tid, data, template) {
+  ,append:function(par,itm,page,path,item,template ){
+    var div = document.createElement('div');
 
-    if (typeof (tid) != "number") {
+    var data = itm;
+    data.type = itm.type;
+    data.name = i;
+    data.title = itm.title;
 
-      if (!tid || !tid.iden) {
-        TsID[++temp_baseIdentity] = { ctrl: tid };
+    div.className = 'w-full';
+
+    data.page = page;
+    data.path = path;
+    data.item = def(itm.item,1) ;
+
+    div.data = data; 
+
+     par.appendChild(div); 
+ 
+
+
+    dyHtml.loader(div, data,template);
+  }
+  , loader: function (tid, data, template) { 
+      
+
+    if (   typeof (tid) != "number") {
+
+      if (!tid || !tid.iden) { 
+
+        TsID[++temp_baseIdentity] = { ctrl:tid  };
+       
         tid = temp_baseIdentity;
       } else tid = (tid.iden);
     }
 
     if (!TsID[tid]) {
 
-      console.log('error :', tid + ' not found component!');
+      console.log('Error Replace:', tid + ' not found component!');
       return;
     }
 
@@ -233,7 +262,7 @@ var dyHtml = {
     th.nextElementSibling = {
       value: template ? template : TsID[tid].template,
       attributes: {
-        "params": { value: data }, 
+        "params": { value: data },
       },
 
       setAttribute: function (n, v) {
@@ -243,23 +272,23 @@ var dyHtml = {
     };
 
 
-    
+
     if (typeof (data) == "object") {
- 
+
 
       if (data.length) {
         elementPageRepeat(th, tid, true);
       } else {
-       
-        th.attributes = {
-            "params": { value: data }, 
-            "path": { value: data.path },
-            "page": { value: data.page },
-          }; 
-          th.setAttribute =  function (n, v) {
-            th.attributes[n] = { value: v };
-          } ; 
-       
+
+        th.nextElementSibling.attributes = {
+          "params": { value: data },
+          "path": { value: data.path },
+          "page": { value: data.page },
+        };
+        th.nextElementSibling.setAttribute = function (n, v) {
+          th.nextElementSibling.attributes[n] = { value: v };
+        };
+
         elementPageLoad(th, tid, true);
       }
 
@@ -285,6 +314,9 @@ var dyHtml = {
 var temp_baseIdentity = 0;
 var temp_objectIden = 0;
 var temp_object = [];
+var bimg = `data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+    9TXL0Y4OHwAAAABJRU5ErkJggg==`;
 
 function initInnerContent(d, fn, fs, pms, fe) {
 
@@ -294,50 +326,48 @@ function initInnerContent(d, fn, fs, pms, fe) {
   fs = def(fs, function (d) {
     return d;
   });
+ 
+  
 
 
   d = d
-    .replaceAll(
-      "<loader",
-      `<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-        9TXL0Y4OHwAAAABJRU5ErkJggg==" onload="elementPageLoad(this,$$TID)"`
-    ).replaceAll(
+ .replaceAll(
+    "<loader",
+    ` <img src="$$bimg" onload="elementPageLoad(this,$$TID)" /><tmp class="hdn-i" `
+  ) .replaceAll(
+    "<iloader",
+    `<div ><img src="$$bimg" onload="elementPageLoad(this,$$TID)" /><tmp class="hdn-i"`
+  ).replaceAll(
       "<repeater",
-      `<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-        9TXL0Y4OHwAAAABJRU5ErkJggg==" onload="elementPageRepeat(this,$$TID)" /><textarea class="hdn-i" `
+      `<img src="$$bimg" onload="elementPageRepeat(this,$$TID)" /><textarea class="hdn-i" `
     )
     .replaceAll(
       "<switcher",
-      `<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-        9TXL0Y4OHwAAAABJRU5ErkJggg==" onload="elementPageSwitch(this,$$TID)" /><textarea class="hdn-i" `
+      `<img src="$$bimg" onload="elementPageSwitch(this,$$TID)" /><textarea class="hdn-i" `
     )
     .replaceAll(
       "<dy",
-      `<img src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
-    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
-        9TXL0Y4OHwAAAABJRU5ErkJggg==" onload="elementPageDynamic(this,$$TID)" /><textarea class="hdn-i" `
+      `<img src="$$bimg" onload="elementPageDynamic(this,$$TID)" /><textarea class="hdn-i" `
     )
-    .replaceAll("></loader>", ` />`)
+    .replaceAll("</loader>", ` </tmp> `)
+    .replaceAll("</iloader>", ` </tmp></div>`)
     .replaceAll("</repeater>", `</textarea>`)
     .replaceAll("$$root", dy.basePath)
     .replaceAll("$$src=", "src=")
     .replaceAll("$$date", new Date().getTime())
-    .replaceAll("$$images", "/images");
+    .replaceAll("$$images", "/images") 
+    .replaceAll("$$bimg",bimg);
 
   if (pms) {
-    for (var pm in pms) { 
+    for (var pm in pms) {
 
-      if(typeof(pms[pm])=='object')
-       {
-        temp_objectIden ++;
+      if (typeof (pms[pm]) == 'object') {
+        temp_objectIden++;
         temp_object[temp_objectIden] = pms[pm];
-        d = d.replaceAll('$$' + pm,'temp_object['+temp_objectIden+']');
+        d = d.replaceAll('$$' + pm, 'temp_object[' + temp_objectIden + ']');
 
-       } else  
-      d = d.replaceAll('$$' + pm, pms[pm]);
+      } else
+        d = d.replaceAll('$$' + pm, pms[pm]);
     }
   }
 
@@ -348,7 +378,7 @@ function initInnerContent(d, fn, fs, pms, fe) {
 
     d = sd0[1];
     TsID[pms.TID] = def(TsID[pms.TID], {});
-    TsID[pms.TID].initSscript = fs(sd0[0]).replace("<script>", "").replace("</script>", "");
+    TsID[pms.TID].initSscript = fs(sd0[0]).replace("<script>", "").replace("</script>", "JsIden++;");
 
     callInitialized(pms.TID, function (d) {
 
@@ -362,7 +392,7 @@ function initInnerContent(d, fn, fs, pms, fe) {
   }
   fn(d);
   if (sd.length != 0) {
-    window.eval(fs(sd[1]).replace("<script>", "").replace("</script>", "").replaceAll('$$_', 'TsID[' + pms.TID + '].'));
+    window.eval(fs(sd[1]).replace("<script>", "").replace("</script>", "JsIden++;").replaceAll('$$_', 'TsID[' + pms.TID + '].'));
     fe(TsID[pms.TID]);
   }
 }
@@ -379,6 +409,7 @@ window.behindLoop = function () {
 };
 window.behindLoop();
 window.TsID = [];
+window.TsName = [];
 
 window.rootUps = [];
 window.rootMoves = [];
@@ -415,9 +446,8 @@ window.winUp = function (evt) {
 
 window.init_page = function (d, json) {
 
-   
+
   for (var it in json) {
-   
     d = d.replaceAll('$$' + it, json[it]);
   }
   return d;
@@ -443,22 +473,31 @@ var callInitialized = function (tid, f) {
 window.elementPageLoad = function (th, tid, noNeedParse) {
 
 
+  var nxt = th.nextElementSibling;
+ 
+
   var par = th.parentNode;
-  par.iden = tid;
-  if (!th.attributes['page']) th.setAttribute('page', 'icon');
-  if (!th.attributes['path']) th.setAttribute('path', '/');
-  if (!th.attributes['params']) th.setAttribute('params', '{}');
+  par.iden = tid; 
+  if (TsID[tid] && TsID[tid].name)
+    par.name = TsID[tid].name;
+
+  if (!nxt.attributes['page']) nxt.setAttribute('page', 'icon');
+  if (!nxt.attributes['path']) nxt.setAttribute('path', '/');
+  if (!nxt.attributes['params']) nxt.setAttribute('params', '{}');
 
 
-  if (th.attributes['online']) th.online = js('function(p){var element = p;var me = p.event;' + th.attributes['online'].value + '}');
+  if (nxt.attributes['online']) nxt.online = js('function(p){var element = p;var me = p.event;' + nxt.attributes['online'].value + '}');
+  if (nxt.attributes['onready']) nxt.onready = js('function(element,model){ ' + nxt.attributes['onready'].value + '}');
+
+   par.onready = nxt.onready;
 
   var param;
   if (!noNeedParse)
-    param = js(th.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
+    param = js(nxt.attributes['params'].value.replaceAll('$$_', 'TsID[' + tid + '].'));
   else
-    param = th.attributes['params'].value;
+    param = nxt.attributes['params'].value;
 
-  loadPage(th.attributes['page'].value, par, null, th.attributes['path'].value,param, th.online);
+  loadPage(nxt.attributes['page'].value, par, null, nxt.attributes['path'].value, param, nxt.online);
 
 };
 
@@ -470,6 +509,11 @@ window.elementPageRepeat = function (th, tid, noNeedParse) {
 
     var par = th.parentNode;
     par.iden = tid;
+
+   
+  if (TsID[tid] && TsID[tid].name)
+    par.name = TsID[tid].name;
+
     if (!txt.attributes['params']) txt.setAttribute('params', '{}');
 
     if (txt.attributes['online']) txt.online = js('function(p){var element = p;var me = p.event;' + txt.attributes['online'].value + '}');
@@ -527,7 +571,10 @@ window.elementPageSwitch = function (th, tid, noNeedParse) {
 
   var par = th.parentNode;
   par.iden = tid;
-  par.title = tid;
+ 
+  if (TsID[tid] && TsID[tid].name)
+    par.name = TsID[tid].name;
+ 
 
   if (!txt.attributes['params']) th.setAttribute('params', '{}');
 
@@ -622,7 +669,7 @@ let dyHtmlExtensionFormat = ".htm";
 
 window.loadPage = function (page, ctl, fun, root, pms, fs) {
   dyHtml.down({
-    url: def(root, '/Layout/') + page + dyHtmlExtensionFormat, success: function (d) {
+    url: def(root, '/_src/Component/') + page + dyHtmlExtensionFormat, success: function (d) {
       temp_baseIdentity++;
       pms = def(pms, {});
       pms.TID = temp_baseIdentity;
@@ -640,6 +687,7 @@ window.loadPage = function (page, ctl, fun, root, pms, fs) {
 
       }, null, pms, function () {
         pms.event = TsID[pms.TID];
+        pms.ready = ctl.onready;
         if (fs) fs(pms);
       });
     }

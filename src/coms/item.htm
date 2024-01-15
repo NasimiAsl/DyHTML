@@ -1,0 +1,41 @@
+<script>
+    $$_iden = ('$$iden' != '$' + '$iden' ? '$$iden' : '');
+    $$_copy = ('$$copy' != '$' + '$copy' ? '' : 'hdn-i');
+    $$_paste = ('$$paste' != '$' + '$paste' ? '' : 'hdn-i');
+    $$_type = ('$$type' != '$' + '$type' ? '$$type'.valueOf() * 1 : 0);
+    $$_delete = ('$$delete' != '$' + '$delete' ? '$$type'.valueOf() * 1 : 0);
+</script>
+/// main content
+<div  id="iden_$$iden" onclick="$$click" oncopy="$$copy;event.stopPropagation()" onpaste="$$paste;event.stopPropagation()" class="rt ns f f-r f-at f-ct f-jb $$css">
+    <div class="fs-05   rad-05 prm-t p-0005   mr-0025  icon   f-center">
+        $$icon
+    </div>
+    <div class="fs-04 w-full   f owf  f-r f-ac f-cc f-js">
+        <switcher params="{iscopy:$$_copy,ispaste:$$_paste,idn: $$_iden}" oncreate="item=$$_type;">
+            <div title="$$idn" >$$text</div>
+            $$next-case
+            <div class="fs-03 c-torg">$$idn</div><input id="inp_$$iden" type="text" readonly="readonly" ondblclick="this.removeAttribute('readonly');"
+                value="$$text" class="$$css c-i-htrans ctrans w-full ba-i-01 c-b-itrans " onkeydown=" 
+             " onkeyup=" var th = this;
+              if(event.keyCode ==13){
+                $$change 
+                
+                th.setAttribute('readonly','readonly');
+               }
+             " />
+            <div onclick=" event.stopPropagation();" id="del_$$iden"
+                class="ab    f-center r-00125 t-00 h-full w-01 ns  icon fs-04 c-ttrwhite2 rad-05 c-hgray">menu
+                <div class="sub    w-mx-025   ab t-005  z09 r-n00125 rad-03 p-0025 cgray  ">
+                   <div class="mt-0025 f f-r f-w f-at f-ct f-js">
+                       
+                        <div title="delete" onclick="$$delete ;event.stopPropagation();" id="del_$$iden"
+                            class="     f-center    w-01  icon fs-04 c-tred rad-05 c-htrwhite2">delete
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </switcher>
+    </div>
+
+</div>

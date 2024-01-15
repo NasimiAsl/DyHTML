@@ -1,0 +1,126 @@
+<script>
+
+</script>
+/// main content
+<div class="w-full">
+    <switcher params="{}" oncreate="item=$$item;">
+        <div class="f f-r f-nw f-at f-ct f-jb m-0005 p-0005">
+            <div class="w-04 f f-r f-at f-ct f-js">$$title</div>
+        </div>
+        $$next-case
+        <div class="rt mb-00125  f f-c f-nw f-at ns f-ct f-jb   p-0005">
+            <div class="    w-auto  op2  w-mx-00  ml-0025 fs-03 prm-t  f f-r f-at f-ct f-js">$$title <span
+                    class="value sel-t ml-0025"></span></div>
+            <div class=" rt p-00125 f f-c  f-at f-ct f-jb">
+
+                <input value="$$value" min="$$min" man="$$max" step="$$step" onmouseenter="this.focus()" onkeydown=" 
+                " onkeyup="
+                var th = this;
+                this.pValue = typeKey(event,def(this.pValue,''),2); 
+                parent2(this,'.value').innerText = this.pValue;
+                if(event.keyCode ==13){
+                    this.value = pValue; 
+                    if(parent3(th).parentNode.data &&  parent3(th).parentNode.data.input)  parent3(th).parentNode.data.input(this.value);
+                
+                    this.pValue = null; 
+                }
+                " oninput=" this.click(); " onclick="var th = this;  parent2(this,'.value').innerText = this.value;
+                
+                if(parent3(th).parentNode.data &&  parent3(th).parentNode.data.input)  parent3(th).parentNode.data.input(this.value);
+                 " id="inp_$$PID_$$name" class="black graym-h" type="$$type" />
+            </div>
+        </div>
+        $$next-case
+        <div class="f-center w-full">
+            <input type="button" class="ba-i-01 c-btrans prm sec-t graym-h prm-t-h rad-03 p-0005 pl-00125 pr-00125"
+                value="$$value" onclick=" " />
+        </div>
+        $$next-case
+        <div class="f-center w-full">
+            <input type="$$_type" onmouseenter="this.focus()" onkeydown=" 
+             " onkeyup="
+             var th = this;  
+             
+                 if(  parent3(th).data &&  parent3(th).data.input)
+                  { 
+                     parent3(th).data.input(this.value);
+                  }
+              
+             " oninput=" this.click(); " onclick="var th = this;   
+             
+             if(parent3(th).data &&  parent3(th).data.input)  parent3(th).data.input(this.value);
+              " id="inp_$$PID_$$name"
+                class="ba-i-01 c-btrans prm-h sec-t-h graym prm-t rad-03 m-0005 p-0005 pl-00125 pr-00125"
+                value="$$value" onclick=" " />
+        </div>
+        $$next-case
+        <div class="ta-l pl-0025 w-full">
+            $$title
+        </div>
+        $$next-case
+        <div class="ta-l pl-0025 w-full">
+            <div class="ml-00125 p-00125 f f-r f-at f-ct f-js"
+                onclick="var th = this;var res = first('.icon',null,this).innerText;
+            first('.icon',null,this).innerText = (res == 'done_outline' ? 'cancel':'done_outline');
+            if(parent3(th).data &&  parent3(th).data.input)  parent3(th).data.input((res != 'done_outline' ? true : false ));">
+                <div
+                    class=" ml-0025 ba-i-01 c-btrans prm-h sec-t-h icon fs-05 graym prm-t rad-03 w-005  h-005  m-0005 mr-00125 p-0005  f-center f-r rad-05 ">
+                    $$value </div>
+                <div class="ta-l f-05 bb  fl f-r f-ac f-cc f-js">$$title</div>
+            </div>
+        </div>
+        $$next-case
+        <div class="ta-l pl-0025 w-full">
+            <div>
+                $$title
+            </div>
+            <div class="w-full p-0005 f f-c f-at f-ct f-jb">
+                <div class="__$$TID_temps">
+                    <img src="$$bimg" onload="__$$TID_rep(this)" params="$$templates" />
+                </div>
+                <textarea  onmouseenter="this.focus()" onkeydown=" 
+                " onkeyup="
+                     var th = this;  
+                     if(  parent3(th).parentNode.data &&  parent3(th).parentNode.data.input)
+                     { 
+                         
+
+                        parent3(th).parentNode.data.input(this.value);
+                     } 
+                " onclick=" var th = this;  
+                     if(  parent3(th).parentNode.data &&  parent3(th).parentNode.data.input)
+                     {  
+
+                        parent3(th).parentNode.data.input(this.value);
+                     } "
+                    class="__$$TID_val  p-0025 w-mx-p90 h-05 rad-03 ba-i-01 c-btrans prm-h sec-t-h graym prm-t ">$$value</textarea>
+            </div>
+        </div>
+    </switcher>
+</div>
+/// background script
+<script>
+    function __$$TID_rep(th) {
+        
+        var data = js(th.attributes['params'].value);
+        var par = th.parentNode;
+        par.innerHTML = '';
+        
+
+        if (data && data.length > 0) {
+
+            for (var i in data) {
+                var img = document.createElement('img');
+                img.className = 'w-01 h-01 rad-03 b-i-01 c-b-itrans c-hgray ';
+                img.data =  data[i].value;
+                img.src = '/images/'+data[i].key+'.svg';
+                img.onclick = function(){
+                    first('.__$$TID_val').value =this.data;
+                    first('.__$$TID_val').click();
+                }
+                 
+                par.appendChild(img);                
+            }
+        }
+    }
+</script>

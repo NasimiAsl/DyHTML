@@ -1,4 +1,5 @@
 {
    "extension" : ".htm",
-   "basePath":"/"
+   "layout":"layout/",
+   "giminiKey":"AIzaSyBhtwpTlZmimMKKzKMi9XLqQ5VhjbfeaMw"
 }

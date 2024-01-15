@@ -1,0 +1,40 @@
+<script>
+    $$_type = ('$$type' != '$' + '$type' ? '$$type'.valueOf() * 1 : 0);
+    $$_delete = ('$$delete' != '$' + '$delete' ? '$$type'.valueOf() * 1 : 0);
+</script>
+/// main content
+<div id="iden_$$iden" class="f f-nw f-c f-at f-ct f-js bbt">
+    <div   onclick="first('#subs_$$iden').classList.toggle('hdn-i');
+    first('#exp_$$iden').classList.toggle('hdn-i');
+    first('#col_$$iden').classList.toggle('hdn-i');
+    " class="rt f f-r f-at f-ct f-jb $$css  " >
+        <div id="exp_$$iden" class="fs-05   rad-05 prm-t p-0005     icon   f-center">
+            expand_less
+        </div>
+        <div id="col_$$iden" class="fs-05  hdn-i   rad-05 prm-t p-0005     icon   f-center">
+            expand_more
+        </div>
+        <div class="fs-03   rad-05 prm-t p-0005   mr-0025  icon   f-center">
+            $$icon
+        </div>
+        <div></div>
+        <div class="fs-04 w-full ns f owf  f-r f-ac f-cc f-js" onclick="event.stopPropagation()">
+
+            <input  id="inp_$$iden" type="text" readonly="readonly" ondblclick="this.removeAttribute('readonly');" value="$$text"
+                class="$$css c-i-htrans ctrans w-full ba-i-01 c-b-itrans " onkeydown=" 
+                 " onkeyup=" var th = this;
+                  if(event.keyCode ==13){
+                    $$change
+    
+                    th.setAttribute('readonly','readonly');
+                   }
+                 " />
+            <div onclick="$$delete ;event.stopPropagation();" id="del_$$iden"
+                class="ab  sub-f f-center r-00 t-00 h-full w-01  icon fs-04 c-twhite rad-05 c-htrwhite2">delete
+            </div>
+        </div>
+    </div>
+    <div id="subs_$$iden" onclick="$$click" class="pt-005 bl-i-02 m-0005 ml-005 h-mn-02  $$sub_css ">
+         
+    </div>
+</div>

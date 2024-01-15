@@ -1,8 +1,42 @@
-<div class=" ba-i-01 graytr-b grayl  h-mx-20 h-mn-05 w-mn-08 w-mx-10  rad-05 f f-r f-w f-at f-ct f-jb">
-  <div class="m-0025 h-full h-mn-06  owf-y  rad-03   w-full  " >
+<div
+  class=" ba-i-01 graytr-b grayl  h-mx-20 h-mn-05 w-mn-08 w-mx-10  rad-05 f f-r f-w f-at f-ct f-jb">
+  <div class="m-0025 result_chat h-full h-mn-06  owf-y  rad-03   w-full  ">
     GPT Content
-  </div> 
-  <div class="m-0025 rt sel-b-h c-hwhite  w-mx-10 owf-x  ba-i-01 grayl-b white rad-03   w-full  f f-r f-nw f-at f-ct f-jb " >
-    <div contenteditable="true" index="1" class="p-005 fs-04 bb  w-full"></div>
-  </div> 
+  </div>
+  <div
+    class="m-0025 rt sel-b-h c-hwhite  w-mx-10 owf-x  ba-i-01 grayl-b white rad-03   w-full  f f-r f-nw f-at f-ct f-jb ">
+    <div contenteditable="true" index="1" class="p-005 fs-04 bb  w-full" onkeyup="sendMessage_$$TID(this,event);">
+
+    </div>
+  </div>
 </div>
+/// background script
+<script>
+
+  function sendMessage_$$TID(th,event){
+    if(event.keyCode==13){
+      first('.result_chat').innerHTML += '<div class=" grayd-t bb">'+th.innerText+'</div>';
+      ai.sendMessage(ai.eng,th.innerText, callBack_$$TID);
+      th.innerText = '';
+    }
+  }
+  
+  function callBack_$$TID(d){ 
+
+    console.log(d);
+    if(d.parsed && d.MSG && d.MSG.length > 1){
+
+first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-tnavy bb"> &#8594; '+d.MSG[1]+' </div>';
+}  else if(d.parsed && d.MSG && d.MSG.length > 0){
+
+first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-tgray bb"> &#916;  '+d.MSG[0]+' </div>';
+
+//ai.sendMessage(ai.eng,ai.init.text3);
+
+} else {
+      first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-ttrred bb"> &#916; '+(ai.tryagain[floor(Math.random()*56)].message)+'</div>';
+   
+    }
+    
+  }
+</script>

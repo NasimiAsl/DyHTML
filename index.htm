@@ -4,33 +4,50 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
- 
 
     <meta name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-        <!-- Page Schema Markup -->
-        <script>
+    <!-- Page Schema Markup -->
+    <script>
           var pageConfig = {
             page: 'home',
             
           };
         </script>
- 
-    <script src="/dyHTML/base.js"></script>   
-    <script src="/dyHTML/loader.js"></script>  
- 
-     
-    <style id="tempCss">  
-    </style> 
+
+    <script type="importmap">
+  {
+    "imports": {
+      "@google/generative-ai": "https://esm.run/@google/generative-ai"
+    }
+  }
+</script>
+
+<script src="/dyHTML/base.js"></script>
+<script src="/dyHTML/loader.js"></script>
     
+<script src="/engine/AI/configAi.js"></script>
+<script type="module">
+  import { GoogleGenerativeAI } from "@google/generative-ai";
+
+  // Fetch your API_KEY
+  const API_KEY = "AIzaSyCUGJ_0QS8QjEHEWqid2jaFKQ14YVoavik";
+
+  window.ai  = new _AI('gemini',API_KEY,GoogleGenerativeAI);
+
+  ai.sendMessage(ai.eng,'how mant part we have?',function(d){
+    
+  });
+ 
+</script>
+
+    <style id="tempCss">  
+    </style>
 
   </head>
   <body> 
-
-    
-    
   </body>
 </html>
