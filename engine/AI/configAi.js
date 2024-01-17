@@ -1,7 +1,7 @@
-var _AI = function (type,api,creator) {
+var _AI = function (type,api,creator,model) {
 
   this.eng = _AI.prototype[type].initEng(api,creator);
-  this.eng.chat = _AI.prototype[type].prompt(this.eng);
+  this.eng.chat = _AI.prototype[type].prompt(this.eng,model);
   this.sendMessage = _AI.prototype[type].sendMessage;
 
 };
@@ -10,12 +10,12 @@ _AI.prototype = {
   eng: null,
   sendMessage: null,
   gemini: {
-    initEng: function (API_KEY,creator) {
+    initEng: function (API_KEY,creator ) {
       const genAI = new creator(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-pro" });
       return { type: 'gemini',eng: genAI,model: model };
     },
-    prompt: function (eng) {
+    prompt: function (eng,model) {
       const chat = eng.model.startChat({
         history: [
           {
@@ -24,7 +24,7 @@ _AI.prototype = {
           },
           {
             role: "model",
-            parts: _AI.prototype.init.text2,
+            parts: model,
           },
         ],
         generationConfig: {
@@ -38,65 +38,115 @@ _AI.prototype = {
 
       return chat;
     },
-    sendMessage: async function (eng,msg,fun) {
+    sendMessage: async function (eng,msg,fun) { 
 
+    try{  
       var result = await eng.chat.sendMessage(msg);
       var response = await result.response;
+
       var text = response.text();
+
+      console.log('result:',text);
+
+      
       var msg = "";
-      if (text && text.indexOf && text.indexOf('```json') != -1) {
-        var text1 = text.split('```json')[1].split('```')[0];
-        var text2 = JSON.parse(text1);
-        text2.parsed = true;
-        msg = text.split('```json')[1].split('```')[1].replaceAll('Short message:','~~~').replaceAll('Full message:','~~~').split('~~~');
-        text2.MSG = msg;
-        if (msg == undefined) text2.MSG = ['',''];
-        text = text2;
+      text = text.replaceAll('```json','```');
+
+      if (text && text.indexOf && (text.indexOf('```') != -1  )) {
+          var text1  = text.split('```');
+          msg = JSON.parse(text1[1]);
+          msg.parsed = true;  
+          if (fun)
+          fun(msg,text[1]);
+      } else {
+        msg = null;
+        fun(null);
       }
-      if (fun)
-        fun(text);
+    
+    } catch(e){  console.log(e); }
     }
   },
   init: {
-    text1: `
-      we make model as json  like this 
-      {parts:{part1:{name:"head"}}}
+    text1: ` 
+      
+      we make model as json   
       so always return me a json.
-      find the part and find the user requirment 
-      and make result as { part1:{ action:'colorChange',color:'#ff0000' }}
+      add short message in json
 
+
+
+      the json must have this parts 
+      {
+        action:'material, ...' or 'other',
+        message:'shorter message',
+        parts:['part1',...] or 'all',
+        properties:['property1',...],
+        values:[1,...]
+      }
+
+      `+'  use "```" as seprator for json data' +`
+
+      try find witch part use wanna change or send me all parts 
+
+      find the part  and find the user requirment type 
+
+      we have 2 kind textures or images
+      first icon one and second is pattern textures. 
         
       only make Json for me if you have any message write that after json as short message 
-      then add full message after add a seprator  
-
-      nasimi is administrator
+      then add full message after add a seprator   
             
-      always explain shortly.
-
-      if you cant find any relation forget the model and response as empty
+       
 
       dont let user add any part or remove any part from model
       if user ask that let me know as uniq action "system Action" so i correct that myself
-      and give him a correct message
+      and give him a correct message 
+      
+      action  "material" details is :
+      "color" use hax color always is color default value  is null
+      "bump" between -1 and 1 for change pattern or texture bump  default value  is null
+      "uvs" a number  uvs is tile UV scale and image size ,textute size  for change pattern or texture scale default value  is null
+      "uvr" between 0 and 360 for rotate pattern or texture default value  is null
+      "bios" between 0 and 5 for make reflect blury or change roghness  default value  is null
+      "phonge" between 0 and 1 for add light effect  default value  is null
+      "metal" between 0 and 1 for add reflect  default value  is null
+      "image"   texture,pattern,material,image,albido,basecolor all is  image
+        
+      important : when use ask show texture,pattern,material,image you must add "image" property
+
+      result sample :  { 
+        
+        properties: ["image"],
+         
+      }
+
+      important : if user missed part property send that as null
+      
+
+      only use mantioned properties in result
            
-       {
-              parts:{
-                  head:{action:"changeColor",color:"#ff0000"} 
-                }
-       } and then you write short message and full message
+      properties is so important in result
+
+      important : "and just set changed properties their not All properties."
+      add message propeerty always to json
+      
+     result sample :  { 
+        action: "material",
+        parsed: true,
+        message:"message",
+        part: ["head","body"],
+        properties: ["bump","metal"],
+        values:[1,0.5] 
+      } 
+      
+       and always make JSON as result
      ` ,
     text2: `
-        model = {
-          parts:{
-            head:{name:"head"},
-            body:{name:"body"},
-            legs:{name:"legs"},
-            hat:{name:"hat,top"}
-          }
-        };
+        wait for model come to you as 
+        model = JSON;
     `,
     text3: `
-       for the message part use Short message and Full Message also use the model for answer.
+       
     `
   }
   ,tryagain: [

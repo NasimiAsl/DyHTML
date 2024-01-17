@@ -215,7 +215,7 @@ var dyHtml = {
       }, null, isLocal);
     }
   }
-  ,append:function(par,itm,page,path,item,template ){
+  ,append:function(par,itm,page,path,template ,css ){
     var div = document.createElement('div');
 
     var data = itm;
@@ -230,13 +230,12 @@ var dyHtml = {
     data.item = def(itm.item,1) ;
 
     div.data = data; 
+    div.className = css;
 
-     par.appendChild(div); 
- 
-
+     par.appendChild(div);  
 
     dyHtml.loader(div, data,template);
-  }
+  }   
   , loader: function (tid, data, template) { 
       
 
@@ -276,7 +275,12 @@ var dyHtml = {
     if (typeof (data) == "object") {
 
 
-      if (data.length) {
+      if (data.array) {
+
+        th.nextElementSibling.attributes["params"].value =  data.array;
+ 
+ 
+
         elementPageRepeat(th, tid, true);
       } else {
 
@@ -325,10 +329,7 @@ function initInnerContent(d, fn, fs, pms, fe) {
   });
   fs = def(fs, function (d) {
     return d;
-  });
- 
-  
-
+  }); 
 
   d = d
  .replaceAll(
@@ -556,6 +557,7 @@ window.elementPageRepeat = function (th, tid, noNeedParse) {
 
     par.innerHTML = content;
 
+    if(txt && txt.remove)
     txt.remove();
   });
 
@@ -618,6 +620,7 @@ window.elementPageSwitch = function (th, tid, noNeedParse) {
   par.innerHTML = content;
 
   if (!noNeedParse)
+  if(txt && txt.remove)
     txt.remove();
 
 };
@@ -661,6 +664,7 @@ window.elementPageDynamic = function (th, tid) {
 
   par.innerHTML = content;
 
+  if(txt && txt.remove)
   txt.remove();
 
 };

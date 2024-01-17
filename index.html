@@ -28,6 +28,9 @@
 
 <script src="/dyHTML/base.js"></script>
 <script src="/dyHTML/loader.js"></script>
+<script>
+window.initAi = null;
+</script>
     
 <script src="/engine/AI/configAi.js"></script>
 <script type="module">
@@ -35,12 +38,11 @@
 
   // Fetch your API_KEY
   const API_KEY = "AIzaSyCUGJ_0QS8QjEHEWqid2jaFKQ14YVoavik";
+  initAi = function(model){
+     window.ai  = new _AI('gemini',API_KEY,GoogleGenerativeAI,model);
 
-  window.ai  = new _AI('gemini',API_KEY,GoogleGenerativeAI);
-
-  ai.sendMessage(ai.eng,'how mant part we have?',function(d){
-    
-  });
+     
+  }
  
 </script>
 

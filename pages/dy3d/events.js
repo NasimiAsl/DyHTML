@@ -22,6 +22,12 @@ local = {
 
         eng.keyFrame = function (time) {
 
+            if(!eng.aiInitialized && eng.aiModel && initAi){
+                eng.aiInitialized = true;
+                console.log(eng.aiModel);
+                initAi(eng.aiModel );
+            }
+
             if (time % 100 < 1) {
                 var width = eng.canvas.offsetWidth;
                 var height = eng.canvas.offsetHight;
@@ -52,32 +58,7 @@ local = {
             clickDown.t = new Date().getTime();
             clickDown.b = event.button;
 
-            if (!eng.scene.KeyCtrl && !eng.scene.KeyShift && !eng.scene.KeyAlt &&
-                clickDown.d && clickDown.b == 0) {
-
-                clickDown.camRotation = 1;
-                th.cameraRotation(eng, clickDown.dx, clickDown.dy, true);
-            }
-
-            if (!eng.scene.KeyCtrl && !eng.scene.KeyShift && !eng.scene.KeyAlt &&
-                clickDown.d && clickDown.b == 2) {
-
-                clickDown.camMovement = 1;
-                th.cameraMovement(eng, clickDown.dx, clickDown.dy, true);
-            }
-
-            if (p.hit) {
-
-                if (eng.scene.KeyCtrl   && !eng.scene.KeyAlt &&
-                    clickDown.d && clickDown.b == 2   ) {
-
-                    clickDown.objMovement = p.pickedMesh;  
-
-                    clickDown.objMovement.ocmd = th.rollCalc('ts',clickDown.objMovement,{});
-
-                    th.objMovement(eng, clickDown.objMovement, clickDown.dx, clickDown.dy, true);
-                }
-            } 
+         
 
         };
 
@@ -91,15 +72,7 @@ local = {
 
             clickDown.m = 1;
 
-            if (clickDown.camRotation)
-                th.cameraRotation(eng, clickDown.dx, clickDown.dy);
-
-            if (clickDown.camMovement)
-                th.cameraMovement(eng, clickDown.dx, clickDown.dy);
-
-            if (clickDown.objMovement)
-                th.objMovement(eng, clickDown.objMovement, clickDown.dx, clickDown.dy,null, eng.scene.KeyShift);
-
+            
         };
 
         scene.onPointerUp = function (d, p) {
@@ -110,9 +83,7 @@ local = {
             clickDown.m = 0;
 
 
-            if(clickDown.objMovement){
-                th.roll('ts',clickDown.objMovement,{},clickDown.objMovement.ocmd);
-            }
+           
              
            clickDown.objMovement = null; 
 

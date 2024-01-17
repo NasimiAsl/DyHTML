@@ -1,145 +1,193 @@
 window.__log = function (m, c) { first('#log').innerHTML = m; };
 local = {
-    updateFaceHelperByCamera: function (camera, locker) {
+   
+    nurbsCall : function (eng,ref,_rims  ) {
+        if (ref.model) ref.model.dispose();
 
-        if (locker) {
+        var rows = js(ref.rows);
+        var cols = js(ref.cols);
+        var rowsp = js(ref.rowsp);
+        var colsp = js(ref.colsp);
 
-            locker.position.x = camera._currentTarget.x;
-            locker.position.y = camera._currentTarget.y;
-            locker.position.z = camera._currentTarget.z;
+        if (rows && rows.length > 0 && cols && cols.length > 0) {
 
-            locker.rotation.y = -90 * deg - camera.alpha;
-            locker.rotation.x = -camera.beta;
+            var refs = [];
+            for (var i in rows) {
+                refs[rows[i]] = r_mur.curve.strToPoints(_rims[rows[i]].str,_rims[rows[i]].clr 
+                ,_rims[rows[i]].rvs, _rims[rows[i]].sld);
+            }
+            for (var i in cols) {
+                refs[cols[i]] = r_mur.curve.strToPoints(_rims[cols[i]].str,_rims[cols[i]].clr 
+                ,_rims[cols[i]].rvs,_rims[cols[i]].sld);
+            }
+
+            ref.model  = eng.maker({
+                curves: refs,
+                rows: rows,
+                rowsPercent: rowsp,
+                columns: cols,
+                columnsPercent: colsp,
+                flip: ref.flip
+            },
+
+                GB.models.nurbs, function (me) {
+
+                    me = eng.scene.pbrMaterial(me,{ 
+                        
+
+                    });
+                  
+                    return me
+                });
+
+                ref.model.rows = rows;
+                ref.model.cols = cols;
+                ref.model.nurbs = true;
+            return ref.model;
+
         }
+    } ,
+    surfaceCall : function  (main3D,ref,_rims  ) {
+        if (ref.model) ref.model.dispose();
 
-        /*scene.camfaceHelper.scaling.x = eng.camera.radius / 20.;
-        scene.camfaceHelper.scaling.y = eng.camera.radius / 20.;
-        scene.camfaceHelper.scaling.z = eng.camera.radius / 20.; */
+        var crvs = js(ref.curves); 
 
-    },
-    objRotationXY: function (eng, obj, dx, dy, start) {
+            var refs = [];
+            for (var i in crvs) {
+                refs.push(r_mur.curve.strToPoints(_rims[crvs[i]].str ,_rims[crvs[i]].clr 
+                ,_rims[crvs[i]].rvs ,  _rims[crvs[i]].sld  ));
+            } 
 
-        var th = this;
-        if (start) {
-            obj.oldRotation = {
-                x: obj.rotation.x,
-                y: obj.rotation.y,
-                z: obj.rotation.z
-            };
-        }
+           ref.model = main3D.maker({ curves: refs, seg: 5, flip: ref.flip }, GB.models.surface, function (me) {
+                    me.Solid({ r: Math.random() * 0.5, g: Math.random() * 0.5, b: Math.random() * 0.5 })
+                        .InLine(`
+                    float dt =1.- dot(wnm,normalize(camera-wps));
+                    float dl = 1.-dot(wnm,normalize(vec3(1000.)-wps));
 
-        obj.rotation.x = obj.oldRotation.x - dx * 0.01;
-        obj.rotation.y = obj.oldRotation.y - dy * 0.01;
+                    result = vec4( vec3(   result.xyz*0.5 +dl*0.25*vec3(1.)+dt*0.5+0.5*dt*result.xyz),1.  );
+                        
+                    
+                    `).Func(function (mt) {
+                            if (location.hash && location.hash.indexOf('!wired') != -1)
+                                mt = mt.Wired();
+                            return mt;
+                        });
+                    return me
+                });
 
-         
+                ref.model.rows = crvs;
+                ref.model.surface = true;
 
-    },
-    cameraRotation: function (eng, dx, dy, start) {
+         return  ref.model; 
+    } , 
 
-        var th = this;
-        if (start) {
-            th.oldRotation = {
-                a: eng.camera.alpha,
-                b: eng.camera.beta,
-                r: eng.camera.radius
-            };
-        }
-
-        eng.camera.alpha = th.oldRotation.a - dx * 0.01;
-        eng.camera.beta = min(PI, max(0, th.oldRotation.b - dy * 0.01));
-
-        th.updateFaceHelperByCamera(eng.camera, eng.locker);
+    init: function (eng) { 
 
 
-    },
-    objMovement: function (eng, obj, dx, dy, start, dep, flat) {
 
-        var th = this;
-        if (start) {
-            obj.oldMovment = {
-                x: obj.position.x,
-                y: obj.position.y,
-                z: obj.position.z
-            };
-        }
+        eng.applyMaterial = function(eng,parts,op){
+
+            console.log(parts);
+
+            eng.lastActiveParts = def( parts,eng.lastActiveParts);
+           
+            if(parts == null) parts = eng.lastActiveParts;
+
+            var cop = op;
+            if(cop.color && cop.color.indexOf('#')==0)
+            cop.color = hexToRgb(cop.color);  
+
+            
+
+            for(var i in eng.scene.parts){ 
+
+             
+
+                if(parts.indexOf(i)!=-1 || parts.indexOf('all')!=-1){ 
+
+              
+                for(var j in eng.scene.parts[i]){
+ 
+
+                    eng.scene.parts[i][j].op = def(eng.scene.parts[i][j].op,{});
+
+
+                    for(var o in cop){  
+                        eng.scene.parts[i][j].op[o] = cop[o]; 
+                    }  
+                 
+                   
+                    eng.scene.parts[i][j].material = r_mur.shader(function(m){
+                        return eng.scene.pbrMaterial(m,eng.scene.parts[i][j].op);});
+                }
+               }
+            }
+
+        };
+
+        eng.scene.pbrMaterial  = function(me,op){
+
+            op.path = op.path != undefined?op.path:'/images/textures/fabric_50.jpg';
+            op.bump = op.bump != undefined?op.bump:0;
+            op.uvs = op.uvs != undefined?op.uvs:1;
+            op.uvr = op.uvr != undefined?op.uvr:0;
+            op.bios = op.bios != undefined?op.bios:0;
+            op.phonge = op.phonge != undefined?op.phonge:0;
+            op.metal = op.metal != undefined?op.metal:0; 
+            op.spec = op.spec != undefined?op.spec:0; 
+            op.sppow = op.sppow != undefined?op.sppow:1; 
+ 
+
+            me.Solid({ 
+                r: op.color?op.color.r:0.0,
+                g: op.color?op.color.g:0.0,
+                b: op.color?op.color.b:0.0 })
+            .InLine(`
+
+            float dt =1.- dot(wnm,normalize(camera-wps));
+            float sp = dot(wnm,normalize(camera-wps));
+            float dl = 1.-dot(wnm,normalize(vec3(1000.)-wps));
+
+        vec2 uvz = pos.xz;
+ 
+        vec3 ref3 = result.xyz ;
         
+        if(abs(nrm.x) > 0.5 && abs(nrm.z)<0.5 && abs(nrm.y)<0.5  ) uvz = pos.yz;
+        else if(abs(nrm.y) > 0.5 && abs(nrm.z)<0.5 && abs(nrm.x)<0.5  ) uvz = pos.xz;
+        else if(abs(nrm.z) > 0.5 && abs(nrm.y)<0.5 && abs(nrm.x)<0.5  ) uvz = pos.yx; 
+        else if(abs(nrm.x) > 0.5 && abs(nrm.z)>0.5 && abs(nrm.y)<0.5  ) uvz = pos.yz;
+        else if(abs(nrm.y) > 0.5 && abs(nrm.x)>0.5 && abs(nrm.z)<0.5  ) uvz = pos.xz;
+        else if(abs(nrm.z) > 0.5 && abs(nrm.y)>0.5 && abs(nrm.x)<0.5  ) uvz = pos.yx;  
+        
+        `)
+        .Map({path:'/images/textures/ref1.jpg'})
+        .Map({path:op.path ,uv:'vec2( r_y(vec3(uvz.x,0.,uvz.y) ,float('+op.uvr+'),vec3(0.5) ).xz* 50./ float('+op.uvs+') )'}).Func(function (mt) {
+              
+                return mt;
+            })
+            .InLine(`
 
-        if (!dep) {
+            vec3 res_1 = result.xyz;
 
-            var dt = {
-                x: eng.locker.top.absolutePosition.x - eng.locker.absolutePosition.x,
-                y: eng.locker.top.absolutePosition.y - eng.locker.absolutePosition.y,
-                z: eng.locker.top.absolutePosition.z - eng.locker.absolutePosition.z
-            };
-            var dl = {
-                x: eng.locker.left.absolutePosition.x - eng.locker.absolutePosition.x,
-                y: eng.locker.left.absolutePosition.y - eng.locker.absolutePosition.y,
-                z: eng.locker.left.absolutePosition.z - eng.locker.absolutePosition.z
-            };
-            obj.position.x = obj.oldMovment.x - 0.01 * (dy * dl.x - dx * dt.x);
-            obj.position.y = obj.oldMovment.y - 0.01 * (dy * dl.y - dx * dt.y);
-            obj.position.z = obj.oldMovment.z - 0.01 * (dy * dl.z - dx * dt.z);
+            `+(op.color ? '':'ref3 = vec3(1.);')+` 
 
-        } else {
+            `+r_mur.reflect('0','wnm','pow(result.z,3.)*float('+op.bump+')',1,1,1,op.bios)+`
+            
+            result = vec4(ref3*result.xyz*(dt*float(`+op.phonge+`)*0.2+(1.-float(`+op.phonge+`))*0.2+0.9-dl*0.2),1.);
+            result.xyz = mix(ref3*res_1.xyz,result.xyz,float(`+op.metal+`));
 
-            var dd = {
-                x: eng.locker.depth.absolutePosition.x - eng.locker.absolutePosition.x,
-                y: eng.locker.depth.absolutePosition.y - eng.locker.absolutePosition.y,
-                z: eng.locker.depth.absolutePosition.z - eng.locker.absolutePosition.z
-            };
+            result.xyz += (1.-sp)*pow(float(`+op.spec+`),float(`+op.sppow+`)) ;
 
-            obj.position.x = obj.oldMovment.x - 0.01 * (dy * dd.x);
-            obj.position.y = obj.oldMovment.y - 0.01 * (dy * dd.y);
-            obj.position.z = obj.oldMovment.z - 0.01 * (dy * dd.z);
-
-        }
-
-      
+            `);
 
 
-    },
-    cameraMovement: function (eng, dx, dy, start) {
-
-        var th = this;
-        if (start) {
-            th.oldMovment = {
-                x: eng.camera._currentTarget.x,
-                y: eng.camera._currentTarget.y,
-                z: eng.camera._currentTarget.z
-            };
-        }
-
-        var dt = {
-            x: eng.locker.top.absolutePosition.x - eng.locker.absolutePosition.x,
-            y: eng.locker.top.absolutePosition.y - eng.locker.absolutePosition.y,
-            z: eng.locker.top.absolutePosition.z - eng.locker.absolutePosition.z
-        };
-        var dl = {
-            x: eng.locker.left.absolutePosition.x - eng.locker.absolutePosition.x,
-            y: eng.locker.left.absolutePosition.y - eng.locker.absolutePosition.y,
-            z: eng.locker.left.absolutePosition.z - eng.locker.absolutePosition.z
+            return me;
         };
 
 
-        eng.camera._currentTarget.x = th.oldMovment.x + 0.01 * (dy * dl.x - dx * dt.x);
-        eng.camera._currentTarget.y = th.oldMovment.y + 0.01 * (dy * dl.y - dx * dt.y);
-        eng.camera._currentTarget.z = th.oldMovment.z + 0.01 * (dy * dl.z - dx * dt.z);
-
-
-
-        th.updateFaceHelperByCamera(eng.camera, eng.locker);
-
-
-    },
-
-
-    init: function (eng) {
-
-
-        eng.maker({}, GB.models.sample, function (me) { me.Light({ phonge: 1 }); return me });
-
+        
         this.applyEvent(eng, eng.scene);
-        // eng.camera.attachControl(eng.canvas, true);
+         eng.camera.attachControl(eng.canvas, true);
 
         eng.locker = eng.maker({ w: 100, h: 100 }, GB.models.faceXZ);
         eng.locker.visibility = 0.;
@@ -164,10 +212,41 @@ local = {
         eng.locker.depth.parent = eng.locker;
         eng.locker.depth.position.y = 1;
 
-        this.cameraRotation(eng, 0, 0, 1);
-        this.cameraMovement(eng, 0, 0, 1);
-
+       
         __log('scene is Ready.');
+
+        window.eng = eng;
+
+        eng.startDt = new Date().getTime();
+        var th = this;
+
+        eng.scene.parts = [];
+
+        dyHtml.script('/models/'+location.search.replaceAll('?','')+'.js', function (p, l) {  
+
+           
+           for(var i in l.parts){ 
+            for(var j in l.parts[i]){
+
+
+
+                if( !eng.scene.parts[i] )eng.scene.parts[i]  = [];
+
+                if(l.parts[i][j].mode == 'nurbs')
+                eng.scene.parts[i][j] = th.nurbsCall(p.eng,l.parts[i][j],l.rims);
+                else if(l.parts[i][j].mode == 'surface')
+                eng.scene.parts[i][j] = th.surfaceCall(p.eng,l.parts[i][j],l.rims);
+             
+            }
+           }
+
+            __log( new Date().getTime() - eng.startDt ) ;
+
+            eng.aiModel = 'public : model.parts = '+ JSON.stringify(l.parts_for_ai)+
+            ' \n  ';
+
+
+        },{eng:eng},true);
 
 
     },

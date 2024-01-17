@@ -1,13 +1,22 @@
 <div
-  class=" ba-i-01 graytr-b grayl  h-mx-20 h-mn-05 w-mn-08 w-mx-10  rad-05 f f-r f-w f-at f-ct f-jb">
-  <div class="m-0025 result_chat h-full h-mn-06  owf-y  rad-03   w-full  ">
-    GPT Content
+  class=" shd_1 white    h-mn-05 w-mn-08 w-mx-10  rad-05 f f-r f-w f-at f-ct f-jb">
+  <div class="p-0025 rad-05 f  f-r f-at f-ct f-js"> <img
+      src='/images/icon-bot.svg' class="w-01 h-mx-01 " />
+    <div class="bb ml-00125 fs-04 pt-0005  f-center ">AI Chat</div>
+  </div>
+  <div class="cwgray2 ba-i-01 c-b-iwhite   h-00125 fs-003 w-full"></div>
+  <div
+    class="m-0025 white rad-05   result_chat h-full h-mn-06 h-mx-11  owf-x  rad-03   w-full   ">
   </div>
   <div
-    class="m-0025 rt sel-b-h c-hwhite  w-mx-10 owf-x  ba-i-01 grayl-b white rad-03   w-full  f f-r f-nw f-at f-ct f-jb ">
-    <div contenteditable="true" index="1" class="p-005 fs-04 bb  w-full" onkeyup="sendMessage_$$TID(this,event);">
+    class="m-0025 rt   c-hwhite  w-mx-10 owf-x    white rad-03   w-full  f f-r f-nw f-at f-ct f-jb ">
+    <div class="w-full f f-r f-at f-ct f-jb">
+      <div contenteditable="true" index="1"
+        class="shd_2 rad-50 p-0025 fs-04 bb  w-full"
+        onkeyup="sendMessage_$$TID(this,event);">
 
-    </div>
+      </div>
+      <img src="/images/icon-messagesend.svg" class="h-full" /> </div>
   </div>
 </div>
 /// background script
@@ -15,28 +24,108 @@
 
   function sendMessage_$$TID(th,event){
     if(event.keyCode==13){
-      first('.result_chat').innerHTML += '<div class=" grayd-t bb">'+th.innerText+'</div>';
+      first('.result_chat').innerHTML += '<div class="m-0025 f f-r f-as f-cs f-js  "><img src="/images/icon-user.svg" class="mr-0025 w-005 h-005" /><div class="shd_3 p-00125 w-p85 rad-03 grayd-t bb">'+th.innerText+'</div></div>';
       ai.sendMessage(ai.eng,th.innerText, callBack_$$TID);
       th.innerText = '';
+      first('.result_chat').scrollTop = first('.result_chat').scrollHeight;
+
     }
   }
-  
-  function callBack_$$TID(d){ 
 
-    console.log(d);
-    if(d.parsed && d.MSG && d.MSG.length > 1){
-
-first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-tnavy bb"> &#8594; '+d.MSG[1]+' </div>';
-}  else if(d.parsed && d.MSG && d.MSG.length > 0){
-
-first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-tgray bb"> &#916;  '+d.MSG[0]+' </div>';
-
-//ai.sendMessage(ai.eng,ai.init.text3);
-
-} else {
-      first('.result_chat').innerHTML += '<div class="m-0005 p-0025   c-b-iwgray c-ttrred bb"> &#916; '+(ai.tryagain[floor(Math.random()*56)].message)+'</div>';
    
+ 
+  
+  function callBack_$$TID(d,fd){ 
+   
+    var msg = "";
+
+    var img = 0;
+   
+
+   console.log(22,d,fd);
+   
+
+    if(d && d.parsed  ){
+
+      if(d.action &&  d.properties    ){
+
+        img = 0;
+          for(var i in d.properties){
+            if(d.properties[i] == 'image'){ 
+              img = 1; 
+              
+            }  
+          }  
+          
+        if(!img){
+          if(d.action == "material"){ 
+
+            var j = {};
+            img = 0;
+            for(var i in d.properties){
+                j[d.properties[i]] = d.values[i];
+            }   
+
+            eng.applyMaterial(eng,d.part|| d.parts,j); 
+          } 
+      }
+
+      } 
+
+    if(d && d.message){
+ 
+    } else {
+
+      d = {};
+
+      d.message = ''+ (ai.tryagain[floor(Math.random()*56)].message) ; 
+
     }
+
+
+  }   
+   else {
+     d = {};
+       d.message = (ai.tryagain[floor(Math.random()*56)].message) ; 
+    } 
+
+    first('.result_chat').innerHTML += '<div  class="rt  r-005 f f-r f-as f-ce f-je  "><div class="shd_4 m-0005 p-0025 rad-03 w-mx-p85 mt-005  m-00125 ">  '+
+      d.message
+      +'  </div><img src="/images/icon-bot.svg" class="ab r-n01 b-00125 mr-0025 w-005 h-005" /></div>';
+   
+ 
+   
+    if(  img){
+
+      try{
+    all('.livePanel' ,function(at){
+      at.innerHTML = '';
+      at.remove(); 
+    }); } catch(e){}
+
+      first('.result_chat').innerHTML += `<div  class="rt pt-00125  r-005 f f-r f-as f-ce f-je  "><div class="shd_4 m-0005 p-0025 rad-03 w-mx-p85 mt-005  m-00125 ">   
+        <div class="livePanel w-full h-mx-08 owf-x f f-r f-w f-as f-cs f-js"> </div> </div><img src="/images/icon-bot.svg" class="ab r-n01 b-00125 mr-0025 w-005 h-005" /></div>`;
+    
+
+      var data = {
+         array : [ {path:'/images/textures/fabric_light_small.jpg',size:'10'},
+         {path:'/images/textures/farbric_mooth.jpg',size:'20'},
+         {path:'/images/textures/fabric_50.jpg',size:'5'}]
+        };  
+
+        eng.lastActiveParts = def(d.part || d.parts,eng.lastActiveParts);
+
+        dyHtml.append( first('.livePanel'),data,null,null,`<div onclick='eng.applyMaterial(eng,null,{path:this.title})' title='$$path' class="w-015 ctrwhite2 h-015 m-00125 f-center rad-05 ba-i-02 c-b-itrans c-b-i-htrwhite2" style="background-image: url('$$path');background-size: $$sizepx;">
+     
+    </div>`,'f f-r f-w f-at f-ct f-js mt-005'); 
+
+      
+    }
+
+
+    first('.result_chat').scrollTop = first('.result_chat').scrollHeight;
+
+
     
   }
 </script>
